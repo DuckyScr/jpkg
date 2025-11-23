@@ -1,5 +1,8 @@
 name: Rust CI & Release
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ "main" ]
