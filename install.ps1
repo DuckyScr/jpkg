@@ -2,7 +2,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$Repo = "YOUR_GITHUB_USER/jpkg"
+$Repo = "DuckyScr/jpkg"
 $BinName = "jpkg"
 $Archive = "${BinName}-windows-x86_64.zip"
 $TmpDir = New-TemporaryFile | Split-Path
