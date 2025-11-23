@@ -1,7 +1,7 @@
 # jpkg – Modern Java Package Manager
-
-<img src="https://github.com/DuckyScr/jpkg/blob/main/jpkg.png" alt="Icon JPKG" width="50" height="50">
-
+<p align="center">
+ <img src="https://github.com/DuckyScr/jpkg/blob/main/jpkg.png" alt="Icon JPKG" width="100" height="100">
+</p>
 > **jpkg** is a fast, cross‑platform Java package manager written in Rust. It resolves Maven artifacts, caches them for offline use, verifies integrity with SHA‑256 checksums, and works on macOS, Linux, and Windows.
 
 ---
