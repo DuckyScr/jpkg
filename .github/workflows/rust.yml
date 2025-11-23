@@ -15,7 +15,7 @@ env:
 
 jobs:
   # -----------------------
-  # 1. Test on Linux
+  # 1. Test
   # -----------------------
   test:
     runs-on: ubuntu-latest
@@ -42,8 +42,8 @@ jobs:
       - name: Build release binary
         run: cargo build --release
 
-      # Packaging for Linux/macOS (bash)
-      - name: Package (Unix)
+      # Package Unix (Linux/macOS)
+      - name: Package Unix
         if: runner.os != 'Windows'
         shell: bash
         run: |
@@ -55,19 +55,23 @@ jobs:
           else
             OS_NAME="macos"
           fi
-          
+
           cd dist
           tar -cJf "${BIN_NAME}-${OS_NAME}-x86_64.tar.xz" "$BIN_NAME"
+          cd ..
+          rm -rf dist/$BIN_NAME  # remove uncompressed binary
 
-      # Packaging for Windows (.zip)
-      - name: Package (Windows)
+      # Package Windows (.zip)
+      - name: Package Windows
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           New-Item -ItemType Directory dist | Out-Null
           Copy-Item "target/release/${env:BIN_NAME}.exe" dist/
           Compress-Archive -Path "dist/${env:BIN_NAME}.exe" -DestinationPath "dist/${env:BIN_NAME}-windows-x86_64.zip"
+          Remove-Item "dist/${env:BIN_NAME}.exe"
 
+      # Upload only packaged archives
       - name: Upload packaged artifact
         uses: actions/upload-artifact@v4
         with:
