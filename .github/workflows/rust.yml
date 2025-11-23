@@ -11,22 +11,21 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  BIN_NAME: jpkg   # <-- CHANGE THIS to your binary name
 
 jobs:
   # -----------------------
-  # 1. Test on Linux
+  # 1. Test
   # -----------------------
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Run Tests
-        run: cargo test --verbose
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --verbose
 
   # -----------------------
-  # 2. Build binaries for Linux, Windows, macOS
+  # 2. Build + Package
   # -----------------------
   build:
     needs: test
@@ -37,22 +36,35 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
 
-      - name: Build Release Binary
+      - name: Build release binary
         run: cargo build --release
 
-      - name: Upload Build Artifact
+      - name: Package artifact
+        shell: bash
+        run: |
+          mkdir dist
+
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            cp target/release/$BIN_NAME.exe dist/
+            cd dist
+            zip "${BIN_NAME}-windows-x86_64.zip" "$BIN_NAME.exe"
+          else
+            cp target/release/$BIN_NAME dist/
+            cd dist
+            tar -cJf "${BIN_NAME}-${{ runner.os | downcase }}-x86_64.tar.xz" "$BIN_NAME"
+          fi
+
+      - name: Upload packaged artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}-binary
-          path: |
-            target/release/*     
+          name: ${{ runner.os }}-package
+          path: dist/*
           if-no-files-found: error
 
   # -----------------------
-  # 3. Publish Release with all binaries
+  # 3. Publish Release
   # -----------------------
   release:
     needs: build
@@ -60,8 +72,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           path: releases
 
@@ -70,6 +81,6 @@ jobs:
         with:
           tag_name: nightly-${{ github.run_number }}
           name: Nightly Build ${{ github.run_number }}
-          files: releases/**/*
+          files: releases/**/*.*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
