@@ -4,7 +4,7 @@ set -e
 # ---------------------------
 # Configuration
 # ---------------------------
-REPO="YOUR_GITHUB_USER/jpkg"
+REPO="DuckyScr/jpkg"
 BIN_NAME="jpkg"
 TMPDIR=$(mktemp -d)
 
