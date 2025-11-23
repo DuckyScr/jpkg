@@ -11,21 +11,22 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  BIN_NAME: jpkg   # <-- CHANGE THIS to your binary name
+  BIN_NAME: jpkg
 
 jobs:
   # -----------------------
-  # 1. Test
+  # 1. Test on Linux
   # -----------------------
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test --verbose
+      - name: Run Tests
+        run: cargo test --verbose
 
   # -----------------------
-  # 2. Build + Package
+  # 2. Build + Package for each OS
   # -----------------------
   build:
     needs: test
@@ -41,20 +42,31 @@ jobs:
       - name: Build release binary
         run: cargo build --release
 
-      - name: Package artifact
+      # Packaging for Linux/macOS (bash)
+      - name: Package (Unix)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           mkdir dist
-
-          if [[ "${{ runner.os }}" == "Windows" ]]; then
-            cp target/release/$BIN_NAME.exe dist/
-            cd dist
-            zip "${BIN_NAME}-windows-x86_64.zip" "$BIN_NAME.exe"
+          cp target/release/$BIN_NAME dist/
+          
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            OS_NAME="linux"
           else
-            cp target/release/$BIN_NAME dist/
-            cd dist
-            tar -cJf "${BIN_NAME}-${{ runner.os | downcase }}-x86_64.tar.xz" "$BIN_NAME"
+            OS_NAME="macos"
           fi
+          
+          cd dist
+          tar -cJf "${BIN_NAME}-${OS_NAME}-x86_64.tar.xz" "$BIN_NAME"
+
+      # Packaging for Windows (.zip)
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dist | Out-Null
+          Copy-Item "target/release/${env:BIN_NAME}.exe" dist/
+          Compress-Archive -Path "dist/${env:BIN_NAME}.exe" -DestinationPath "dist/${env:BIN_NAME}-windows-x86_64.zip"
 
       - name: Upload packaged artifact
         uses: actions/upload-artifact@v4
