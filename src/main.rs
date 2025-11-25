@@ -136,7 +136,13 @@ fn main() -> Result<()> {
             project::init_project(name)?;
             println!(
                 "{}",
-                format!("✓ Initialized project '{}'", name).green().bold()
+                format!("✓ Initialized project '{}' in ./{}/", name, name)
+                    .green()
+                    .bold()
+            );
+            println!(
+                "{}",
+                format!("  Run 'cd {}' to enter the project directory", name).dimmed()
             );
         }
         Commands::Find { query } => {

@@ -1,6 +1,6 @@
 # jpkg – Modern Java Package Manager
 
-![jpkg logo](/Users/adam/.gemini/antigravity/brain/9dfbfc3f-6d84-4740-9a52-139847b788dc/jpkg_logo_1763913637237.png)
+![jpkg logo]()
 
 > **jpkg** is a fast, cross‑platform Java package manager written in Rust. It resolves Maven artifacts, caches them for offline use, verifies integrity with SHA‑256 checksums, and works on macOS, Linux, and Windows.
 
@@ -41,8 +41,9 @@ The PowerShell script fetches the Windows binary, places it in `$Env:ProgramFile
 ## 🚀 Quick Start
 
 ```bash
-# Initialise a new project
+# Initialise a new project (creates a directory)
 jpkg init myapp
+cd myapp
 
 # Add a dependency (e.g., Guava)
 jpkg add com.google.guava:guava:31.1-jre
