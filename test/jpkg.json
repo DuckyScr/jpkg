@@ -1,0 +1,11 @@
+{
+  "package": {
+    "name": "test",
+    "version": "0.1.0",
+    "description": null
+  },
+  "dependencies": {
+    "org.openpnp:opencv": "4.9.0-0",
+    "com.google.guava:guava": "33.4.8-jre"
+  }
+}

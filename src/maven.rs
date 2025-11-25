@@ -109,6 +109,7 @@ pub struct SearchResult {
     pub id: String,
     pub g: String,
     pub a: String,
+    #[serde(rename = "latestVersion")]
     pub latest_version: String,
 }
 
@@ -159,4 +160,24 @@ pub struct Dependency {
     pub artifact_id: String,
     pub version: Option<String>,
     pub scope: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_search_artifact_limit() {
+        let client = MavenClient::new();
+        // "spring" is a very common term
+        let results = client.search_artifact("spring").unwrap();
+        assert!(
+            results.len() <= 20,
+            "Search results should be limited to 20"
+        );
+        assert!(
+            !results.is_empty(),
+            "Search should return some results for 'spring'"
+        );
+    }
 }
