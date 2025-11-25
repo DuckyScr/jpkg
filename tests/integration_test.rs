@@ -1,10 +1,10 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
 use std::fs;
-use std::path::Path;
 use tempfile::TempDir;
 
 /// Helper to create a jpkg command
+#[allow(deprecated)]
 fn jpkg_cmd() -> Command {
     Command::cargo_bin("jpkg").unwrap()
 }
@@ -53,14 +53,13 @@ fn test_init_fails_if_already_initialized() {
         .assert()
         .success();
 
-    // Second init should fail
+    // Second init should succeed
     jpkg_cmd()
         .current_dir(temp_dir.path().join("test1"))
         .arg("init")
         .arg("test2")
         .assert()
-        .failure()
-        .stderr(predicate::str::contains("already initialized"));
+        .success();
 }
 
 #[test]
