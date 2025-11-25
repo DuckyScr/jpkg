@@ -7,9 +7,19 @@ use std::path::Path;
 use std::process::Command;
 
 pub fn init_project(name: &str) -> Result<()> {
-    if Path::new("jpkg.json").exists() {
-        anyhow::bail!("{}", "Project already initialized (jpkg.json exists)".red());
+    let project_dir = Path::new(name);
+
+    // Check if directory already exists
+    if project_dir.exists() {
+        anyhow::bail!("{}", format!("Directory '{}' already exists", name).red());
     }
+
+    // Create the project directory
+    fs::create_dir(project_dir)?;
+
+    // Change to the project directory for all subsequent operations
+    std::env::set_current_dir(project_dir)
+        .context(format!("Failed to change to directory '{}'", name))?;
 
     // 1. Create jpkg.json
     let manifest = Manifest::new(name, "0.1.0");
@@ -21,30 +31,25 @@ pub fn init_project(name: &str) -> Result<()> {
     fs::create_dir_all("lib")?;
     fs::create_dir_all("bin")?;
 
-    // 3. Create Main.java if not exists
+    // 3. Create Main.java
     let main_java = Path::new("src/main/java/Main.java");
-    if !main_java.exists() {
-        let java_content = r#"public class Main {
+    let java_content = r#"public class Main {
     public static void main(String[] args) {
         System.out.println("Hello from jpkg!");
     }
 }
 "#;
-        fs::write(main_java, java_content)?;
-    }
+    fs::write(main_java, java_content)?;
 
     // 4. Create .gitignore
-    let gitignore = Path::new(".gitignore");
-    if !gitignore.exists() {
-        let gitignore_content = r#"/lib/
+    let gitignore_content = r#"/lib/
 /bin/
 /target/
 .vscode/
 .idea/
 *.iml
 "#;
-        fs::write(gitignore, gitignore_content)?;
-    }
+    fs::write(".gitignore", gitignore_content)?;
 
     // 5. VS Code settings
     fs::create_dir_all(".vscode")?;

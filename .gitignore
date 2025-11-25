@@ -1,2 +1,6 @@
 /target
-/test_proj
+/test-workspace
+/test-workspace/*
+/run-tests.sh
+/test-results.txt
+/my-test-project

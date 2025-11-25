@@ -41,8 +41,9 @@ The PowerShell script fetches the Windows binary, places it in `$Env:ProgramFile
 ## 🚀 Quick Start
 
 ```bash
-# Initialise a new project
+# Initialise a new project (creates a directory)
 jpkg init myapp
+cd myapp
 
 # Add a dependency (e.g., Guava)
 jpkg add com.google.guava:guava:31.1-jre
