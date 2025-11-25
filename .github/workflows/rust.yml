@@ -96,7 +96,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: beta-${{ github.run_number }}
-          name: Beta ${{ github.run_number }}
+          name: Release
           files: releases/**/*.*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
